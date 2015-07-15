@@ -8,10 +8,12 @@ import (
 
 	"github.com/0xAX/notificator"
 	"github.com/andlabs/ui"
+	"github.com/ziutek/gst"
 )
 
 const (
-	fipURL = "http://www.fipradio.fr/sites/default/files/import_si/si_titre_antenne/FIP_player_current.json"
+	fipURL       = "http://www.fipradio.fr/sites/default/files/import_si/si_titre_antenne/FIP_player_current.json"
+	fipStreamURL = "http://audio.scdn.arkena.com/11016/fip-midfi128.mp3"
 )
 
 var window ui.Window
@@ -45,7 +47,7 @@ func updateGui(ct closableTicker, c, p, p2, n, n2 *song, nt *notificator.Notific
 				artist = current.Current.songAPIType.Interpretemorceau
 				album = current.Current.songAPIType.Titrealbum
 				if ntc.Checked() {
-					nt.Push("GoFIP", title+" par "+artist+" ("+album+")", "")
+					nt.Push(title, artist+" ("+album+")", "")
 				}
 				updateTab(c, current.Current.songAPIType)
 				updateTab(p, current.Previous1.songAPIType)
@@ -80,6 +82,15 @@ func updateTab(s *song, c songAPIType) {
 }
 
 func initGui() {
+	player := gst.ElementFactoryMake("playbin", "player")
+	player.SetProperty("uri", fipStreamURL)
+	player.SetState(gst.STATE_PLAYING)
+	bus := player.GetBus()
+	bus.EnableSyncMessageEmission()
+	bus.AddSignalWatch()
+
+	playing := true
+
 	var currentSong song
 	var previousSong song
 	var previousSong2 song
@@ -117,14 +128,32 @@ func initGui() {
 	createTab(&previousSong2, current.Previous2.songAPIType)
 	createTab(&nextSong, current.Next1.songAPIType)
 	createTab(&nextSong2, current.Next2.songAPIType)
-	tabstack := ui.NewTab()
-	tabstack.Append("Current", currentSong.vstack)
-	tabstack.Append("Previous", previousSong.vstack)
-	tabstack.Append("Next", nextSong.vstack)
-	tabstack.Append("Settings", ui.NewVerticalStack(ntc, prc))
-	tabstack.Append("Credits", ui.NewLabel("Depado 2015"))
+	ts := ui.NewTab()
+	ts.Append("Current", currentSong.vstack)
+	ts.Append("Previous", previousSong.vstack)
+	ts.Append("Next", nextSong.vstack)
+	ts.Append("Settings", ui.NewVerticalStack(ntc, prc))
+	ts.Append("Credits", ui.NewLabel("Depado 2015"))
 
-	window = ui.NewWindow("GoFIP", 400, 300, tabstack)
+	psl := ui.NewLabel("Currently Playing")
+	ppbtn := ui.NewButton("Pause")
+	ppbtn.OnClicked(func() {
+		if playing {
+			ppbtn.SetText("Play")
+			player.SetState(gst.STATE_PAUSED)
+			psl.SetText("Currently Paused")
+			playing = false
+		} else {
+			ppbtn.SetText("Pause")
+			psl.SetText("Currently Playing")
+			player.SetState(gst.STATE_PLAYING)
+			playing = true
+		}
+	})
+	mvs := ui.NewVerticalStack(ts, ppbtn, psl)
+	mvs.SetStretchy(0)
+
+	window = ui.NewWindow("GoFIP", 400, 200, mvs)
 	window.OnClosing(func() bool {
 		ui.Stop()
 		return true
