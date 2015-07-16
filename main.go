@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"strings"
 	"time"
 
 	"github.com/0xAX/notificator"
@@ -34,9 +35,9 @@ func updateGui(ct closableTicker, nt *notificator.Notificator, ntc ui.Checkbox, 
 			}
 			if previous != current {
 				if ntc.Checked() {
-					title = current.Current.songAPIType.Titre
-					artist = current.Current.songAPIType.Interpretemorceau
-					album = current.Current.songAPIType.Titrealbum
+					title = strings.Title(strings.ToLower(current.Current.songAPIType.Titre))
+					artist = strings.Title(strings.ToLower(current.Current.songAPIType.Interpretemorceau))
+					album = strings.Title(strings.ToLower(current.Current.songAPIType.Titrealbum))
 					nt.Push(title, artist+" ("+album+")", "")
 				}
 				updateTabs(songs...)

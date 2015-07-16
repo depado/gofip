@@ -1,6 +1,10 @@
 package main
 
-import "github.com/andlabs/ui"
+import (
+	"strings"
+
+	"github.com/andlabs/ui"
+)
 
 type song struct {
 	title  ui.Label
@@ -13,9 +17,9 @@ type song struct {
 }
 
 func (s *song) createTab() {
-	s.title = ui.NewLabel("Titre : " + s.api.Titre)
-	s.album = ui.NewLabel("Album : " + s.api.Titrealbum)
-	s.artist = ui.NewLabel("Artiste : " + s.api.Interpretemorceau)
+	s.title = ui.NewLabel("Titre : " + strings.Title(strings.ToLower(s.api.Titre)))
+	s.album = ui.NewLabel("Album : " + strings.Title(strings.ToLower(s.api.Titrealbum)))
+	s.artist = ui.NewLabel("Artiste : " + strings.Title(strings.ToLower(s.api.Interpretemorceau)))
 	s.year = ui.NewLabel("Année : " + s.api.Anneeeditionmusique)
 	s.gstack = ui.NewGrid()
 	s.gstack.Add(s.title, nil, ui.South, false, ui.LeftTop, false, ui.LeftTop, 1, 1)
@@ -26,9 +30,9 @@ func (s *song) createTab() {
 }
 
 func (s *song) updateTab() {
-	s.title.SetText("Titre : " + s.api.Titre)
-	s.album.SetText("Album: " + s.api.Titrealbum)
-	s.artist.SetText("Artiste : " + s.api.Interpretemorceau)
+	s.title.SetText("Titre : " + strings.Title(strings.ToLower(s.api.Titre)))
+	s.album.SetText("Album: " + strings.Title(strings.ToLower(s.api.Titrealbum)))
+	s.artist.SetText("Artiste : " + strings.Title(strings.ToLower(s.api.Interpretemorceau)))
 	s.year.SetText("Année : " + s.api.Anneeeditionmusique)
 }
 
