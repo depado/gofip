@@ -127,6 +127,7 @@ func initGui() {
 
 	// Creates the main vertical stack that is passed to the main window.
 	mvs := ui.NewVerticalStack(ts, ppbtn, psl)
+	// The tab control must be set to stretchy otherwise it won't display the content
 	mvs.SetStretchy(0)
 
 	// Creates the main window and the behaviour on close event.
