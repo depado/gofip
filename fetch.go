@@ -1,5 +1,10 @@
 package main
 
+import (
+	"encoding/json"
+	"net/http"
+)
+
 type fipAPIType struct {
 	Current struct {
 		Emission struct {
@@ -42,4 +47,18 @@ type songAPIType struct {
 		Medium string `json:"medium"`
 	} `json:"visuel"`
 	Lien string `json:"lien"`
+}
+
+func fetchLatest() (current fipAPIType, err error) {
+	res, err := http.Get(fipURL)
+	if err != nil {
+		return
+	}
+	defer res.Body.Close()
+	dec := json.NewDecoder(res.Body)
+	err = dec.Decode(&current)
+	if err != nil {
+		return
+	}
+	return
 }
