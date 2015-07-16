@@ -9,13 +9,14 @@ type song struct {
 	year   ui.Label
 	vstack ui.Control
 	gstack ui.Grid
+	api    *songAPIType
 }
 
-func (s *song) createTab(c songAPIType) {
-	s.title = ui.NewLabel("Titre : " + c.Titre)
-	s.album = ui.NewLabel("Album : " + c.Titrealbum)
-	s.artist = ui.NewLabel("Artiste : " + c.Interpretemorceau)
-	s.year = ui.NewLabel("Année : " + c.Anneeeditionmusique)
+func (s *song) createTab() {
+	s.title = ui.NewLabel("Titre : " + s.api.Titre)
+	s.album = ui.NewLabel("Album : " + s.api.Titrealbum)
+	s.artist = ui.NewLabel("Artiste : " + s.api.Interpretemorceau)
+	s.year = ui.NewLabel("Année : " + s.api.Anneeeditionmusique)
 	s.gstack = ui.NewGrid()
 	s.gstack.Add(s.title, nil, ui.South, false, ui.LeftTop, false, ui.LeftTop, 1, 1)
 	s.gstack.Add(s.album, nil, ui.South, false, ui.LeftTop, false, ui.LeftTop, 1, 1)
@@ -24,9 +25,21 @@ func (s *song) createTab(c songAPIType) {
 	s.vstack = ui.NewVerticalStack(ui.Space(), s.gstack)
 }
 
-func (s *song) updateTab(c songAPIType) {
-	s.title.SetText("Titre : " + c.Titre)
-	s.album.SetText("Album: " + c.Titrealbum)
-	s.artist.SetText("Artiste : " + c.Interpretemorceau)
-	s.year.SetText("Année : " + c.Anneeeditionmusique)
+func (s *song) updateTab() {
+	s.title.SetText("Titre : " + s.api.Titre)
+	s.album.SetText("Album: " + s.api.Titrealbum)
+	s.artist.SetText("Artiste : " + s.api.Interpretemorceau)
+	s.year.SetText("Année : " + s.api.Anneeeditionmusique)
+}
+
+func updateTabs(songs ...*song) {
+	for _, c := range songs {
+		c.updateTab()
+	}
+}
+
+func createTabs(songs ...*song) {
+	for _, c := range songs {
+		c.createTab()
+	}
 }
