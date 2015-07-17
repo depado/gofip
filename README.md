@@ -24,4 +24,6 @@ go get "github.com/ziutek/gst"
 
 ## Known issues
 
- - When the streams stops (due to instable connection for example) it won't sync and it will keep reading the stream. I should add an option to resync the stream. 
+ - When the streams stops (due to instable connection for example) it won't sync and it will keep reading the stream. I should add an option to resync the stream.
+ - Sometimes the API changes and some fields are absent. There is no error check on that, must fix.
+ - The covers don't automatically change. 
