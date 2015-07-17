@@ -55,9 +55,9 @@ func initGui() {
 	// Creates the initial songs that will be used as long as the program runs.
 	cs := song{api: &current.Current.songAPIType}
 	ps := song{api: &current.Previous1.songAPIType}
-	ps2 := song{api: &current.Previous2.songAPIType}
+	// ps2 := song{api: &current.Previous2.songAPIType}
 	ns := song{api: &current.Next1.songAPIType}
-	ns2 := song{api: &current.Next2.songAPIType}
+	// ns2 := song{api: &current.Next2.songAPIType}
 
 	// Creates the player and the controls for the player (as well as label).
 	player := initPlayer()
@@ -103,16 +103,16 @@ func initGui() {
 				ticker: time.NewTicker(1 * time.Minute),
 				halt:   make(chan bool, 1),
 			}
-			go updateGui(ct, nt, ntc, &cs, &ps, &ps2, &ns, &ns2)
+			go updateGui(ct, nt, ntc, &cs, &ps, &ns)
 		}
 	})
 
 	// Start the goroutine to update the GUI every minute (default behaviour)
 	// Uses the closableTicker defined earlier so the goroutine can be stopped.
-	go updateGui(ct, nt, ntc, &cs, &ps, &ps2, &ns, &ps)
+	go updateGui(ct, nt, ntc, &cs, &ps, &ns)
 
 	// Creating the tabs with the songs as well as settings and credits.
-	createTabs(&cs, &ps, &ps2, &ns, &ns2)
+	createTabs(&cs, &ps, &ns)
 	ts := ui.NewTab()
 	ts.Append("Current", cs.vstack)
 	ts.Append("Previous", ps.vstack)
