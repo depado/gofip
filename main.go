@@ -2,7 +2,6 @@ package main
 
 import (
 	"log"
-	"strings"
 	"time"
 
 	"github.com/0xAX/notificator"
@@ -22,9 +21,6 @@ var current fipAPIType
 func updateGui(ct closableTicker, nt *notificator.Notificator, ntc ui.Checkbox, songs ...*song) {
 	var err error
 	var previous fipAPIType
-	var title string
-	var artist string
-	var album string
 	for {
 		select {
 		case <-ct.ticker.C:
@@ -33,12 +29,11 @@ func updateGui(ct closableTicker, nt *notificator.Notificator, ntc ui.Checkbox, 
 			if err != nil {
 				log.Fatal(err)
 			}
+			// In case the current song changed, push a notification if the ntc
+			// checkbox is checked and update the tabs.
 			if previous != current {
 				if ntc.Checked() {
-					title = strings.Title(strings.ToLower(current.Current.songAPIType.Titre))
-					artist = strings.Title(strings.ToLower(current.Current.songAPIType.Interpretemorceau))
-					album = strings.Title(strings.ToLower(current.Current.songAPIType.Titrealbum))
-					nt.Push(title, artist+" ("+album+")", "")
+					current.Current.songAPIType.push(nt)
 				}
 				updateTabs(songs...)
 			}
@@ -137,8 +132,6 @@ func initGui() {
 		ui.Stop()
 		return true
 	})
-
-	// Actually show the window.
 	window.Show()
 }
 

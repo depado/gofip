@@ -3,6 +3,9 @@ package main
 import (
 	"encoding/json"
 	"net/http"
+	"strings"
+
+	"github.com/0xAX/notificator"
 )
 
 type fipAPIType struct {
@@ -47,6 +50,13 @@ type songAPIType struct {
 		Medium string `json:"medium"`
 	} `json:"visuel"`
 	Lien string `json:"lien"`
+}
+
+func (s *songAPIType) push(nt *notificator.Notificator) {
+	title := strings.Title(strings.ToLower(s.Titre))
+	artist := strings.Title(strings.ToLower(s.Interpretemorceau))
+	album := strings.Title(strings.ToLower(s.Titrealbum))
+	nt.Push(title, artist+" ("+album+")", "")
 }
 
 func fetchLatest() (current fipAPIType, err error) {
