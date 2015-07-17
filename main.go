@@ -48,7 +48,6 @@ func updateGui(ct closableTicker, nt *notificator.Notificator, ntc ui.Checkbox, 
 func initPlayer() (player *gst.Element) {
 	player = gst.ElementFactoryMake("playbin", "player")
 	player.SetProperty("uri", fipStreamURL)
-	player.SetState(gst.STATE_PLAYING)
 	return
 }
 
@@ -133,6 +132,7 @@ func initGui() {
 		return true
 	})
 	window.Show()
+	player.SetState(gst.STATE_PLAYING)
 }
 
 func main() {
