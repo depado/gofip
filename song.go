@@ -12,17 +12,6 @@ import (
 	"github.com/andlabs/ui"
 )
 
-type areaHandler struct {
-	img *image.RGBA
-}
-
-func (a *areaHandler) Paint(rect image.Rectangle) *image.RGBA {
-	return a.img.SubImage(rect).(*image.RGBA)
-}
-
-func (a *areaHandler) Mouse(me ui.MouseEvent)  {}
-func (a *areaHandler) Key(ke ui.KeyEvent) bool { return false }
-
 type song struct {
 	api    *songAPIType
 	title  ui.Label
@@ -35,7 +24,7 @@ type song struct {
 
 // Updates the cover of the s song. Downloads the image, decodes it and draws it
 // over the previous image.
-func (s *song) updateCover(create bool) (err error) {
+func (s *song) generateCover(create bool) (err error) {
 	var url string
 	var src image.Image
 
@@ -55,7 +44,7 @@ func (s *song) updateCover(create bool) (err error) {
 
 // Updates the labels for the s song.
 // create defines whether or not we're creating the elements.
-func (s *song) updateLabels(create bool) {
+func (s *song) generateLabels(create bool) {
 	if create {
 		s.title = ui.NewLabel("Titre : " + strings.Title(strings.ToLower(s.api.Titre)))
 		s.album = ui.NewLabel("Album : " + strings.Title(strings.ToLower(s.api.Titrealbum)))
@@ -72,10 +61,10 @@ func (s *song) updateLabels(create bool) {
 // Creates the tab for the specified song. Calls updateLabels and updateCover
 // with the create argument to true. Defines two grids : igrid and ogrid
 // igrid contains all the labels
-// ogrid groups the covera
+// ogrid groups the area containing the image handler and the igrid
 func (s *song) createTab() {
-	s.updateLabels(true)
-	s.updateCover(true)
+	s.generateLabels(true)
+	s.generateCover(true)
 	// Inside Grid
 	igrid := ui.NewGrid()
 	igrid.Add(s.title, nil, ui.South, false, ui.LeftTop, false, ui.LeftTop, 1, 1)
@@ -91,14 +80,14 @@ func (s *song) createTab() {
 
 // Updates the s song's tab.
 func (s *song) updateTab() {
-	s.updateLabels(false)
-	s.updateCover(false)
+	s.generateLabels(false)
+	s.generateCover(false)
 }
 
 // Update all the tabs of all the songs passed as arguments.
 func updateTabs(songs ...*song) {
 	for _, c := range songs {
-		c.updateTab()
+		go c.updateTab()
 	}
 }
 

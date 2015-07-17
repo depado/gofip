@@ -12,6 +12,8 @@ import (
 const (
 	fipURL       = "http://www.fipradio.fr/sites/default/files/import_si/si_titre_antenne/FIP_player_current.json"
 	fipStreamURL = "http://audio.scdn.arkena.com/11016/fip-midfi128.mp3"
+	height       = 200
+	width        = 450
 )
 
 var window ui.Window
@@ -51,17 +53,22 @@ func initPlayer() (player *gst.Element) {
 	return
 }
 
+// Initializes the GUI. Function is passed to ui.Do.
 func initGui() {
+	var cs, ps, ns song
+	var player *gst.Element
+	var playing bool
+
 	// Creates the initial songs that will be used as long as the program runs.
-	cs := song{api: &current.Current.songAPIType}
-	ps := song{api: &current.Previous1.songAPIType}
+	cs = song{api: &current.Current.songAPIType}
+	ps = song{api: &current.Previous1.songAPIType}
 	// ps2 := song{api: &current.Previous2.songAPIType}
-	ns := song{api: &current.Next1.songAPIType}
+	ns = song{api: &current.Next1.songAPIType}
 	// ns2 := song{api: &current.Next2.songAPIType}
 
 	// Creates the player and the controls for the player (as well as label).
-	player := initPlayer()
-	playing := true
+	player = initPlayer()
+	playing = true
 	psl := ui.NewLabel("Currently Playing")
 	ppbtn := ui.NewButton("Pause")
 	ppbtn.OnClicked(func() {
@@ -122,16 +129,18 @@ func initGui() {
 
 	// Creates the main vertical stack that is passed to the main window.
 	mvs := ui.NewVerticalStack(ts, ppbtn, psl)
-	// The tab control must be set to stretchy otherwise it won't display the content
+	// The tab control must be set to stretchy otherwise it won't display the content.
 	mvs.SetStretchy(0)
 
 	// Creates the main window and the behaviour on close event.
-	window = ui.NewWindow("GoFIP", 400, 200, mvs)
+	window = ui.NewWindow("GoFIP", width, height, mvs)
 	window.OnClosing(func() bool {
 		ui.Stop()
 		return true
 	})
 	window.Show()
+
+	// Starts the player once the window is shown.
 	player.SetState(gst.STATE_PLAYING)
 }
 
@@ -139,11 +148,11 @@ func main() {
 	var err error
 	current, err = fetchLatest()
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("Error : %v\n", err)
 	}
 	go ui.Do(initGui)
 	err = ui.Go()
 	if err != nil {
-		panic(err)
+		log.Fatalf("Error : %v\n", err)
 	}
 }
