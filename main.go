@@ -114,9 +114,9 @@ func initGui() {
 	// Creating the tabs with the songs as well as settings and credits.
 	createTabs(&cs, &ps, &ns)
 	ts := ui.NewTab()
-	ts.Append("Current", cs.vstack)
-	ts.Append("Previous", ps.vstack)
-	ts.Append("Next", ns.vstack)
+	ts.Append("Current", cs.stack)
+	ts.Append("Previous", ps.stack)
+	ts.Append("Next", ns.stack)
 	ts.Append("Settings", ui.NewVerticalStack(ntc, prc))
 	ts.Append("Credits", ui.NewLabel("Depado 2015"))
 
